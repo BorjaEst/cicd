@@ -8,18 +8,29 @@
 # or using default args:
 # $ docker build -t <dockerhub_user>/<dockerhub_repo> .
 
-# set the base image. default is debian, optional ubuntu
+# set the base image. default is debian, optional ubuntu 
 ARG base=debian
 # set the tag (e.g. latest, stable, stable-slim : for debian)
 ARG tag=stable-slim
+# set the erlang otp version to build/run 
+ARG otp_v=23.0
 
-# Base image, e.g. debian:stable-slim
+# Build image, e.g. erlang:23.0
+FROM erlang:${otp_v}
+
+# Set build working directory
+RUN mkdir /buildroot
+WORKDIR /buildroot
+
+# Copy our Erlang application and build the release
+COPY . app
+WORKDIR /buildroot/app
+RUN rebar3 as prod release
+
+# Base image, e.g. alpine:latest
 FROM ${base}:${tag}
 
 LABEL maintainer='Borja Esteban'
-
-# What branch to clone (!)
-ARG branch=master
 
 # Which user and group to use 
 ARG user=application
@@ -41,10 +52,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV DEBIAN_FRONTEND=dialog
 
 # Install user app:
-RUN git clone --depth 1 -b ${branch} https://github.com/BorjaEst/cicd.git app && \
-# Clean up
-    rm -rf /root/.cache/pip/* && \
-    rm -rf /tmp/*
+COPY --from=0 /buildroot/app/_build/prod/rel/cicd_relx /app
 WORKDIR /app
 
 # Ports to expose
@@ -58,6 +66,6 @@ RUN groupadd -r ${group} && \
 USER ${user}
 
 # Start default script
-ENTRYPOINT [ "/app/main" ]
-CMD [ "" ]
+ENTRYPOINT [ "/app/bin/cicd_relx" ]
+CMD [ "foreground" ]
 

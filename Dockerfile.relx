@@ -1,0 +1,56 @@
+# Dockerfile has three Arguments: otp_v
+# otp_v - Erlang OTP version for the deployment
+#
+# To build the image:
+# $ docker build -t <dockerhub_user>/<dockerhub_repo> --build-arg arg=value .
+# or using default args:
+# $ docker build -t <dockerhub_user>/<dockerhub_repo> .
+
+# set the erlang otp version to build/run 
+ARG otp_v=23.0
+
+# Build image, e.g. erlang:23.0
+FROM erlang:${otp_v}-alpine
+
+# Set build working directory
+RUN mkdir /buildroot
+WORKDIR /buildroot
+
+# Copy our Erlang application and build the release
+COPY . app
+WORKDIR /buildroot/app
+RUN rebar3 as prod release
+
+# Base image, e.g. alpine:latest
+FROM alpine
+
+LABEL maintainer='Borja Esteban'
+
+# Which user and group to use 
+ARG user=application
+ARG group=standard
+
+# Set environments
+ENV LANG C.UTF-8
+
+# Install some libs
+RUN apk add --no-cache openssl && \
+    apk add --no-cache ncurses-libs
+
+# Install user app:
+COPY --from=0 /buildroot/app/_build/prod/rel/k8ga_pool_relx /app
+WORKDIR /app
+
+# Ports to expose
+EXPOSE 8080
+
+# Change user context and drop root privileges
+RUN addgroup -S ${group} && \
+    adduser -S -h /app -G ${group} ${user} && \
+    chown -R ${user} . 
+USER ${user}
+
+# Start default script
+ENTRYPOINT [ "/app/bin/k8ga_pool_relx" ]
+CMD [ "foreground" ]
+

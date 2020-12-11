@@ -15,6 +15,6 @@ def group(*tests):
 def load_tests(loader, tests, pattern):
     group1 = group(
         module_template.Tests('test_001'),
-        module_template.Tests('test_002')
+        module_template.Tests('test_002', value=1)
     )
     return group1

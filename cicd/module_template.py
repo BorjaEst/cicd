@@ -12,18 +12,19 @@ def hello_world(*arg, **kwarg):
 
 class Tests(unittest.TestCase):
     """Tests for `module_template` package."""
-    def __init__(self, testName):
+    def __init__(self, testName, value=None):
         super().__init__(testName)
+        self.value = value
 
     def setUp(self):
         """Set up test fixtures, if any (once per case).
         """
-        self.value = 1
+        print("\nTest setUp")
 
     def tearDown(self):
         """Tear down test fixtures, if any (once per case).
         """
-        self.value = 0
+        print("\nTest tearDown")
 
     def test_001(self):
         self.assertTrue(hello_world())

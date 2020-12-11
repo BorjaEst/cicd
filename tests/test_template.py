@@ -1,21 +1,20 @@
 """Unittest module template."""
 
-
 import unittest
 
 from cicd import module_template
 
 
-class TestCICD_module_template(unittest.TestCase):
-    """Tests for `module_template` package."""
+def group(*tests):
+    suite = unittest.TestSuite()
+    for testCase in tests:
+        suite.addTest(testCase)
+    return suite
 
-    def setUp(self):
-        """Set up test fixtures, if any."""
 
-    def tearDown(self):
-        """Tear down test fixtures, if any."""
-
-    def test_000_something(self):
-        """Test something."""
-        self.assertTrue(module_template.hello_world())
-        self.assertFalse(False)
+def load_tests(loader, tests, pattern):
+    group1 = group(
+        module_template.Tests('test_001'),
+        module_template.Tests('test_002', value=1)
+    )
+    return group1

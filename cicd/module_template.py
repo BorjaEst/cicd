@@ -24,12 +24,12 @@ class Tests(unittest.TestCase):
     def tearDown(self):
         """Tear down test fixtures, if any (once per case).
         """
-        print("\nTest tearDown")
+        print("Test tearDown")
 
     def test_001(self):
         self.assertTrue(hello_world())
         self.assertFalse(False)
 
     def test_002(self):
-        self.assertEqual(self.value, 1)
+        print("Param value: {}".format(self.value)) 
         self.assertIsInstance(self.value, int)

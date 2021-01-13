@@ -19,7 +19,7 @@ class Tests(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures, if any (once per case).
         """
-        print("\nTest setUp")
+        print("Test setUp")
 
     def tearDown(self):
         """Tear down test fixtures, if any (once per case).
@@ -31,5 +31,5 @@ class Tests(unittest.TestCase):
         self.assertFalse(False)
 
     def test_002(self):
-        print("Param value: {}".format(self.value)) 
+        print("Param value: {}".format(self.value))
         self.assertIsInstance(self.value, int)

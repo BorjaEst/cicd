@@ -16,19 +16,31 @@ class Tests(unittest.TestCase):
         super().__init__(testName)
         self.value = value
 
+    @classmethod
+    def setUpClass(cls):
+        """Shared set up fixtures, if any (runs only once).
+        """
+        print("Test setUpClass")
+
+    @classmethod
+    def tearDownClass(cls):
+        """Shared tear down fixtures, if any (runs only once).
+        """
+        print("Test tearDownClass")
+
     def setUp(self):
         """Set up test fixtures, if any (once per case).
         """
-        print("Test setUp")
+        print("Tests setUp")
 
     def tearDown(self):
         """Tear down test fixtures, if any (once per case).
         """
-        print("Test tearDown")
+        print("Tests tearDown")
 
     def test_001(self):
-        self.assertTrue(hello_world())
-        self.assertFalse(False)
+        print("Param value: {}".format(self.value))
+        self.assertTrue(True)
 
     def test_002(self):
         print("Param value: {}".format(self.value))

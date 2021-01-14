@@ -5,42 +5,55 @@ import unittest
 from cicd import module_template
 
 
-def init(Level):
-    print(">>--Init {}".format(Level))
+class Group_001(unittest.TestCase):
+    """Tests for application, Group 001"""
 
+    def setUp(self):
+        """Set up group fixtures, if any (once per case)."""
+        print("Group 001 setUp")
 
-def down(Level):
-    print("<<--Down {}".format(Level))
+    def tearDown(self):
+        """Tear down group fixtures, if any (once per case)."""
+        print("Group 001 tearDown")
 
+    def suite_001(self):
+        """Returns suite_001 suite"""
+        suite = unittest.TestSuite()
+        suite.addTest(module_template.Tests('test_001'))
+        suite.addTests(self.suite_002())
+        return suite
 
-class Tests(unittest.TestCase):
-    """Tests for application."""
-
-    def group_001(self):
-        """Run tests calling setUp/tearDown from module"""
-        init(Level="group_001")
-        module_template.Tests('test_001').run()
-        module_template.Tests('test_002', value=1).run()
-        down(Level="group_001")
-
-    def group_002(self):
-        """Run tests omiting setUp/tearDown from module"""
-        init(Level="group_002")
-        module_template.Tests('test_001').test_001()
-        module_template.Tests('test_002', value=2).test_002()
-        down(Level="group_002")
-
-    def group_010(self, Level):
-        """New group that takes the previous 2"""
-        init(Level=Level)
-        self.group_001()
-        self.group_002()
-        down(Level=Level)
+    def suite_002(self):
+        """Returns suite_002 suite"""
+        suite = unittest.TestSuite()
+        suite.addTest(module_template.Tests('test_002', value=1))
+        suite.addTest(module_template.Tests('test_002', value=2))
+        return suite
 
     def test_001(self):
-        """Test that calls group1 using level 001"""
-        self.group_010(Level="Root test_001")
+        runner = unittest.TextTestRunner()
+        result = runner.run(self.suite_001())
+        self.assertTrue(result.wasSuccessful())
 
-    def test_002(self):
-        """Test that calls group1 using level 002"""
-        self.group_010(Level="Root test_002")
+
+class Group_002(unittest.TestCase):
+    """Tests for application, Group 001"""
+
+    def setUp(self):
+        """Set up group fixtures, if any (once per case)."""
+        print("Group 002 setUp")
+
+    def tearDown(self):
+        """Tear down group fixtures, if any (once per case)."""
+        print("Group 002 tearDown")
+
+    def suite_001(self):
+        """Returns suite_001 suite"""
+        suite = unittest.TestSuite()
+        suite.addTest(Group_001('test_001'))
+        return suite
+
+    def test_001(self):
+        runner = unittest.TextTestRunner()
+        result = runner.run(self.suite_001())
+        self.assertTrue(result.wasSuccessful())

@@ -1,49 +1,29 @@
-"""Unittest module template."""
-
-import unittest
-
-from cicd import module_template
+import pytest
 
 
-def suite_001(param):
-    """Returns suite_001 suite"""
-    suite = unittest.TestSuite()
-    suite.addTest(module_template.Tests('test_002', value=param+1))
-    suite.addTest(module_template.Tests('test_002', value=param-1))
-    return suite
+@pytest.fixture(scope="module", params=["mod1", "mod2"])
+def modarg(request):
+    param = request.param
+    print("  SETUP modarg", param)
+    yield param
+    print("  TEARDOWN modarg", param)
 
 
-class Group_001(unittest.TestCase):
-    """Tests for application, Group 001"""
-
-    def setUp(self):
-        """Set up group fixtures, if any (once per case)."""
-        print("Group 001 setUp")
-
-    def tearDown(self):
-        """Tear down group fixtures, if any (once per case)."""
-        print("Group 001 tearDown")
-
-    def test_001(self):
-        print("This is test 001")
-        runner = unittest.TextTestRunner()
-        result = runner.run(suite_001(param=1))
-        self.assertTrue(result.wasSuccessful())
+@pytest.fixture(scope="function", params=[1, 2])
+def otherarg(request):
+    param = request.param
+    print("  SETUP otherarg", param)
+    yield param
+    print("  TEARDOWN otherarg", param)
 
 
-class Group_002(unittest.TestCase):
-    """Tests for application, Group 001"""
+def test_0(otherarg):
+    print("  RUN test0 with otherarg", otherarg)
 
-    def setUp(self):
-        """Set up group fixtures, if any (once per case)."""
-        print("Group 002 setUp")
 
-    def tearDown(self):
-        """Tear down group fixtures, if any (once per case)."""
-        print("Group 002 tearDown")
+def test_1(modarg):
+    print("  RUN test1 with modarg", modarg)
 
-    def test_002(self):
-        print("This is test 002")
-        runner = unittest.TextTestRunner()
-        result = runner.run(Group_001("test_001"))
-        self.assertTrue(result.wasSuccessful()) 
+
+def test_2(otherarg, modarg):
+    print("  RUN test2 with otherarg {} and modarg {}".format(otherarg, modarg))

@@ -25,6 +25,7 @@ class Group_001(unittest.TestCase):
         print("Group 001 tearDown")
 
     def test_001(self):
+        print("This is test 001")
         runner = unittest.TextTestRunner()
         result = runner.run(suite_001(param=1))
         self.assertTrue(result.wasSuccessful())
@@ -41,7 +42,8 @@ class Group_002(unittest.TestCase):
         """Tear down group fixtures, if any (once per case)."""
         print("Group 002 tearDown")
 
-    def test_001(self):
+    def test_002(self):
+        print("This is test 002")
         runner = unittest.TextTestRunner()
-        result = runner.run(suite_001(param=-1))
-        self.assertTrue(result.wasSuccessful())
+        result = runner.run(Group_001("test_001"))
+        self.assertTrue(result.wasSuccessful()) 
